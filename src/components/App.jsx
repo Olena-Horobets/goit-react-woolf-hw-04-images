@@ -48,6 +48,9 @@ export class App extends Component {
         .getFetchResponse(newValue)
         .then(response => {
           try {
+            if (!response.length) {
+              throw Error;
+            }
             this.setState({ images: [...response] });
             this.setState({ status: STATUS.RESOLVED });
           } catch {
@@ -55,7 +58,6 @@ export class App extends Component {
           }
         })
         .catch(err => {
-          console.log(err);
           notify(`Sorry, we couldn't find anything for you`);
           this.resetSearchData();
           this.setState({ status: STATUS.REJECTED });
@@ -106,7 +108,7 @@ export class App extends Component {
     }
 
     if (status === STATUS.REJECTED) {
-      return <div className="rejest-image"></div>;
+      return <div className="reject-image"></div>;
     }
   };
 
@@ -117,10 +119,10 @@ export class App extends Component {
     photoFinder
       .getFetchResponse(searchValue)
       .then(response => {
-        this.setState(({ images }) => {
-          return { images: [...images, ...response] };
-        });
         try {
+          this.setState(({ images }) => {
+            return { images: [...images, ...response] };
+          });
           this.setState({ status: STATUS.RESOLVED });
         } catch {
           throw Error;
