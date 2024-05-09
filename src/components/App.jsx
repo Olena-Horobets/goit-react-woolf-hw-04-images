@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { Component, useState, useEffect } from 'react';
 import { photoFinder } from 'APIdataFetch';
 
 import { ToastContainer, toast } from 'react-toastify';
@@ -20,159 +20,128 @@ const STATUS = {
   REJECTED: 'rejected',
 };
 
-export class App extends Component {
-  state = {
-    status: STATUS.IDLE,
-    searchValue: '',
-    images: [],
-    modal: {
-      isShown: false,
-      imageUrl: '',
-      alt: 'photo',
-    },
-  };
+export function App() {
+  const [status, setStatus] = useState(STATUS.IDLE);
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevValue = prevState.searchValue;
-    const newValue = this.state.searchValue;
+  const [searchValue, setSearchValue] = useState('');
+  const [page, setPage] = useState(1);
+  const [images, setImages] = useState([]);
 
-    if (prevValue !== newValue) {
-      photoFinder.resetPage();
-      if (newValue === '') {
-        this.resetSearchData();
-        return;
-      }
+  const [modal, setModal] = useState({
+    isShown: false,
+    imageUrl: '',
+    alt: '',
+  });
 
-      this.setState({ status: STATUS.PENDING });
+  useEffect(() => {
+    if (!searchValue) {
+      resetSearchData();
+      return;
+    } else {
+      setStatus(STATUS.PENDING);
+
       photoFinder
-        .getFetchResponse(newValue)
+        .getFetchResponse(searchValue, page)
         .then(response => {
           try {
-            if (!response.length) {
-              throw Error;
-            }
-            this.setState({ images: [...response] });
-            this.setState({ status: STATUS.RESOLVED });
+            page === 1
+              ? setImages(response)
+              : setImages(prev => [...prev, ...response]);
+
+            setStatus(STATUS.RESOLVED);
           } catch {
             throw Error;
           }
         })
         .catch(err => {
-          notify(`Sorry, we couldn't find anything for you`);
-          this.resetSearchData();
-          this.setState({ status: STATUS.REJECTED });
+          toast.error(`Sorry, we couldn't find anything for you`);
+          resetSearchData();
+          setStatus(STATUS.REJECTED);
         });
     }
-  }
+  }, [page, searchValue]);
 
   // Methods for search handling
-  onSearchSubmit = searchValue => {
-    this.setState({ searchValue });
+  const onFormSubmit = newValue => {
+    setSearchValue(newValue);
+    setPage(1);
   };
 
-  resetSearchData = () => {
-    this.setState({
-      searchValue: '',
-      images: [],
-      status: STATUS.IDLE,
-    });
+  const resetSearchData = () => {
+    setStatus(STATUS.IDLE);
+    setSearchValue('');
+    setImages([]);
   };
 
   // Methods for components render
-  defineMainContent = () => {
-    const { status, images } = this.state;
-    if (status === STATUS.IDLE) {
-      return (
-        <h2 className="reqest-message">...enter what are you looking for</h2>
-      );
-    }
-
-    if (status === STATUS.PENDING) {
-      return <Loader />;
-    }
-
-    if (status === STATUS.RESOLVED) {
-      return (
-        <>
-          <ImageGallery images={images} onCardClick={this.onGalleryCardClick} />
-          {!this.isLastPage() && (
-            <Button
-              type="button"
-              className="btn"
-              text="Load more"
-              onClick={this.onLoadMore}
-            />
-          )}
-        </>
-      );
-    }
-
-    if (status === STATUS.REJECTED) {
-      return <div className="reject-image"></div>;
-    }
+  const isLastPage = () => {
+    return images.length < photoFinder.perPage;
   };
 
-  onLoadMore = () => {
-    this.setState({ status: STATUS.PENDING });
-    const { searchValue } = this.state;
-    photoFinder.setNextPage();
-    photoFinder
-      .getFetchResponse(searchValue)
-      .then(response => {
-        try {
-          this.setState(({ images }) => {
-            return { images: [...images, ...response] };
-          });
-          this.setState({ status: STATUS.RESOLVED });
-        } catch {
-          throw Error;
-        }
-      })
-      .catch(err => {
-        notify(`Sorry, we couldn't find anything for you`);
-        this.resetSearchData();
-        this.setState({ status: STATUS.REJECTED });
-      });
-  };
+  const defineMainContent = () => {
+    switch (status) {
+      case STATUS.IDLE:
+        return (
+          <h2 className="reqest-message">...enter what are you looking for</h2>
+        );
 
-  isLastPage = () => {
-    return this.state.images.length < photoFinder.perPage;
+      case STATUS.PENDING:
+        return <Loader />;
+
+      case STATUS.RESOLVED:
+        return (
+          <>
+            <ImageGallery images={images} onCardClick={onGalleryCardClick} />
+            {!isLastPage() && (
+              <Button
+                type="button"
+                className="btn"
+                text="Load more"
+                onClick={() => {
+                  setPage(prev => prev + 1);
+                }}
+              />
+            )}
+          </>
+        );
+
+      case STATUS.REJECTED:
+        return <div className="reject-image"></div>;
+
+      default:
+        setStatus(STATUS.IDLE);
+    }
   };
 
   // Methods for modal window
-  onGalleryCardClick = ({ url, alt }) => {
-    this.toggleModal(url, alt);
+  const onGalleryCardClick = ({ url, alt }) => {
+    toggleModal(url, alt);
   };
 
-  toggleModal = (imageUrl = '', alt = 'photo') => {
-    this.setState(({ modal }) => {
-      return { modal: { isShown: !modal.isShown, imageUrl, alt } };
-    });
+  const toggleModal = (imageUrl = '', alt = '') => {
+    setModal(prev => ({ ...prev, isShown: !prev.isShown, imageUrl, alt }));
   };
 
-  render() {
-    const { modal } = this.state;
-
-    return (
-      <div className={modal.isShown ? 'AppFixed' : 'App'} id="App">
-        <ToastContainer theme="colored" icon={true} limit={1} />
-        <Header />
-        <div className="container">
-          <SearchForm
-            onSubmit={this.onSearchSubmit}
-            notify={notify}
-            onReset={this.resetSearchData}
-          />
-          {this.defineMainContent()}
-        </div>
-        {modal.isShown && (
-          <Modal
-            src={modal.imageUrl}
-            alt={modal.alt}
-            onModalClose={this.toggleModal}
-          />
-        )}
+  // RENDER ITSELF
+  return (
+    <div className={modal.isShown ? 'AppFixed' : 'App'} id="App">
+      <ToastContainer theme="colored" icon={true} limit={1} />
+      <Header />
+      <div className="container">
+        <SearchForm
+          onSubmit={onFormSubmit}
+          notify={toast.error}
+          onReset={resetSearchData}
+        />
+        {defineMainContent()}
       </div>
-    );
-  }
+      {modal.isShown && (
+        <Modal
+          src={modal.imageUrl}
+          alt={modal.alt}
+          onModalClose={toggleModal}
+        />
+      )}
+    </div>
+  );
 }

@@ -6,29 +6,20 @@ class SearchPhotoData {
     this.#BASE_URL = url;
     this.#API_KEY = key;
 
-    this.page = 1;
     this.perPage = perPage;
     this.imageType = imageType;
     this.orientation = orientation;
     this.safesearch = safesearch;
   }
 
-  setNextPage = () => {
-    return (this.page += 1);
-  };
-
-  resetPage = () => {
-    this.page = 1;
-  };
-
-  getBasicFetchUrl(searchValue) {
-    return `${this.#BASE_URL}?key=${this.#API_KEY}&q=${searchValue}&page=${
-      this.page
-    }`;
+  getBasicFetchUrl(searchValue, page) {
+    return `${this.#BASE_URL}?key=${
+      this.#API_KEY
+    }&q=${searchValue}&page=${page}`;
   }
 
-  getFetchUrl(searchValue = '') {
-    const url = `${this.getBasicFetchUrl(searchValue)}&per_page=${
+  getFetchUrl(searchValue = '', page = 1) {
+    const url = `${this.getBasicFetchUrl(searchValue, page)}&per_page=${
       this.perPage
     }&image_type=${this.imageType}&orientation=${this.orientation}&safesearch=${
       this.safesearch
