@@ -9,7 +9,7 @@ import SearchForm from './Searchbar';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
 import Modal from './Modal';
-// import { LoadingViev } from 'components/LoadingView/LoadingView';
+import Loader from './Loader';
 
 const notify = message => toast.error(message);
 
@@ -86,8 +86,7 @@ export class App extends Component {
     }
 
     if (status === STATUS.PENDING) {
-      // return <LoadingViev />;
-      <p>loading</p>;
+      return <Loader />;
     }
 
     if (status === STATUS.RESOLVED) {
