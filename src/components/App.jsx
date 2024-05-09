@@ -8,7 +8,7 @@ import Header from './Header';
 import SearchForm from './Searchbar';
 import ImageGallery from './ImageGallery';
 import Button from './Button';
-// import { Modal } from './components/Modal/Modal';
+import Modal from './Modal';
 // import { LoadingViev } from 'components/LoadingView/LoadingView';
 
 const notify = message => toast.error(message);
@@ -166,14 +166,13 @@ export class App extends Component {
           />
           {this.defineMainContent()}
         </div>
-        {/* <Footer />
         {modal.isShown && (
           <Modal
             src={modal.imageUrl}
             alt={modal.alt}
             onModalClose={this.toggleModal}
           />
-        )} */}
+        )}
       </div>
     );
   }

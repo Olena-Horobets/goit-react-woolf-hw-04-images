@@ -1,0 +1,75 @@
+/* Lightbox */
+.lightbox {
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.lightbox__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.lightbox__content {
+  transform: scale(0.8);
+  transition: transform var(--animation);
+}
+
+.lightbox__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 100vh;
+  max-width: 100vw;
+}
+
+.lightbox__button {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: var(--white-color);
+  cursor: pointer;
+  transition: background-color var(--animation), color var(--animation);
+  outline: none;
+
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
+}
+
+.lightbox__buttonClose {
+  composes: lightbox__button;
+  top: 8px;
+  right: 8px;
+}
+
+.lightbox__buttonClose:hover,
+.lightbox__buttonClose:focus {
+  color: var(--accent-hover-color);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  display: inline-block;
+  fill: currentColor;
+  filter: drop-shadow(2px 2px 4px rgba(63, 63, 63, 0.616))
+    drop-shadow(1px 1px 1px rgba(63, 63, 63, 0.616));
+}
