@@ -1,0 +1,80 @@
+.galleryCard {
+  position: relative;
+  width: calc((100% - 80px) / 4);
+  height: 220px;
+  margin: 10px;
+  overflow: hidden;
+  border-radius: 8px;
+
+  box-shadow: var(--obj-shadow);
+  cursor: pointer;
+}
+
+.galleryCard__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.info__thumb {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  padding-left: 18px;
+  padding-right: 18px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #ffffff3b;
+}
+
+.blur {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+
+  background-size: cover;
+  background-position: bottom;
+  left: 0;
+  filter: blur(5px);
+}
+
+.infoItem {
+  color: var(--white-color);
+  opacity: 0.93;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1;
+  text-shadow: var(--text-shadow);
+  display: inline-flex;
+  align-items: flex-end;
+}
+
+.infoItem:not(first-child) {
+  margin-left: 12px;
+}
+
+.icon {
+  display: inline-block;
+  margin-left: 5px;
+  opacity: 0.93;
+  fill: currentColor;
+  filter: drop-shadow(2px 2px 4px rgba(63, 63, 63, 0.616))
+    drop-shadow(1px 1px 1px rgba(63, 63, 63, 0.616));
+}
