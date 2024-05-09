@@ -27,8 +27,8 @@ class SearchPhotoData {
     return url;
   }
 
-  getFetchResponse(query) {
-    return fetch(this.getFetchUrl(query))
+  getFetchResponse(query, page) {
+    return fetch(this.getFetchUrl(query, page))
       .then(res => {
         if (res.status === 200) {
           return res.json();

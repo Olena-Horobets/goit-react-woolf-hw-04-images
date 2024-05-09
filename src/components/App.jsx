@@ -1,5 +1,5 @@
-import { Component, useState, useEffect } from 'react';
-import { photoFinder } from 'APIdataFetch';
+import { useState, useEffect } from 'react';
+import { photoFinder } from 'services/APIdataFetch';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -54,7 +54,7 @@ export function App() {
           }
         })
         .catch(err => {
-          toast.error(`Sorry, we couldn't find anything for you`);
+          notify(`Sorry, we couldn't find anything for you`);
           resetSearchData();
           setStatus(STATUS.REJECTED);
         });

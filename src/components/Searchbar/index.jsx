@@ -1,67 +1,59 @@
 import s from './Searchbar.module.css';
 
-import { Component } from 'react';
+import { useState } from 'react';
 
 import Button from 'components/Button';
 
-class SearchForm extends Component {
-  state = {
-    value: '',
+function SearchForm({ notify, onSubmit, onReset }) {
+  const [value, setValue] = useState('');
+
+  const handleInputChange = e => {
+    setValue(e.currentTarget.value.toLowerCase());
   };
 
-  handleInputChange = e => {
-    this.setState({ value: e.currentTarget.value.toLowerCase() });
+  const resetInput = () => {
+    setValue('');
+    onReset();
   };
 
-  handleFormSubmit = e => {
+  const handleFormSubmit = e => {
     e.preventDefault();
-    if (!this.state.value.trim().length) {
-      this.props.notify('ENTER SOMETHING');
-      this.resetInput();
+    if (!value.trim().length) {
+      notify('ENTER SOMETHING');
+      resetInput();
       return;
     }
-    this.props.onSubmit(this.state.value);
+    onSubmit(value);
   };
 
-  resetInput = () => {
-    this.setState({ value: '' });
-    this.props.onReset();
-  };
-
-  render() {
-    return (
-      <form
-        className={s.searchForm}
-        id="search-form"
-        onSubmit={this.handleFormSubmit}
-      >
-        <input
-          onChange={this.handleInputChange}
-          value={this.state.value}
-          className={s.searchForm__input}
-          type="text"
-          name="query"
-          autoComplete="off"
-          autoFocus={true}
-          placeholder="Search images..."
-          aria-label="Search images"
-        />
-        <Button
-          className="search-form__btn"
-          type="submit"
-          disabled={!this.state.value.length}
-          text="Search"
-        />
-        <Button
-          className="search-form__btn--reset"
-          type="button"
-          disabled={!this.state.value}
-          text="Reset"
-          onClick={this.resetInput}
-        />
-      </form>
-    );
-  }
+  return (
+    <form className={s.searchForm} id="search-form" onSubmit={handleFormSubmit}>
+      <input
+        onChange={handleInputChange}
+        value={value}
+        className={s.searchForm__input}
+        type="text"
+        name="query"
+        autoComplete="off"
+        autoFocus={true}
+        placeholder="Search images..."
+        aria-label="Search images"
+      />
+      <Button
+        className="search-form__btn"
+        type="submit"
+        disabled={!value.length}
+        text="Search"
+      />
+      <Button
+        className="search-form__btn--reset"
+        type="button"
+        disabled={!value}
+        text="Reset"
+        onClick={resetInput}
+      />
+    </form>
+  );
 }
 
 export default SearchForm;
