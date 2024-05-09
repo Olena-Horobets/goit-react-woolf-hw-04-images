@@ -47,13 +47,13 @@ class SearchForm extends Component {
           aria-label="Search images"
         />
         <Button
-          class="search-form__btn"
+          className="search-form__btn"
           type="submit"
           disabled={!this.state.value.length}
           text="Search"
         />
         <Button
-          class="search-form__btn--reset"
+          className="search-form__btn--reset"
           type="button"
           disabled={!this.state.value}
           text="Reset"

@@ -98,7 +98,7 @@ export class App extends Component {
           {!this.isLastPage() && (
             <Button
               type="button"
-              class="btn"
+              className="btn"
               text="Load more"
               onClick={this.onLoadMore}
             />
@@ -140,9 +140,7 @@ export class App extends Component {
   };
 
   // Methods for modal window
-  onGalleryCardClick = e => {
-    const url = e.currentTarget.getAttribute('datasrc');
-    const alt = e.currentTarget.getAttribute('dataalt');
+  onGalleryCardClick = ({ url, alt }) => {
     this.toggleModal(url, alt);
   };
 
