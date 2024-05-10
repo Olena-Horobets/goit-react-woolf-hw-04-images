@@ -8,16 +8,16 @@ const modalRoot = document.querySelector('#modal-root');
 
 function Modal({ alt, src, onModalClose }) {
   useEffect(() => {
+    const onEscapePress = e => {
+      return e.code !== 'Escape' ? null : onModalClose();
+    };
+
     window.addEventListener('keydown', onEscapePress);
 
     return () => {
       window.removeEventListener('keydown', onEscapePress);
     };
-  }, []);
-
-  const onEscapePress = e => {
-    return e.code !== 'Escape' ? null : onModalClose();
-  };
+  }, [onModalClose]);
 
   const onBackdropClick = e => {
     return e.target !== e.currentTarget ? null : onModalClose();

@@ -25,6 +25,7 @@ export function App() {
 
   const [searchValue, setSearchValue] = useState('');
   const [page, setPage] = useState(1);
+  const [isLastPage, setIsLastPage] = useState(false);
   const [images, setImages] = useState([]);
 
   const [modal, setModal] = useState({
@@ -44,10 +45,19 @@ export function App() {
         .getFetchResponse(searchValue, page)
         .then(response => {
           try {
-            page === 1
-              ? setImages(response)
-              : setImages(prev => [...prev, ...response]);
+            if (!response.length) {
+              notify(`Sorry, we couldn't find anything for you`);
+            }
+            if (page === 1) {
+              setIsLastPage(false);
+              setImages(response);
+            } else {
+              setImages(prev => [...prev, ...response]);
+            }
 
+            if (response.length < 12) {
+              setIsLastPage(true);
+            }
             setStatus(STATUS.RESOLVED);
           } catch {
             throw Error;
@@ -55,7 +65,6 @@ export function App() {
         })
         .catch(err => {
           notify(`Sorry, we couldn't find anything for you`);
-          resetSearchData();
           setStatus(STATUS.REJECTED);
         });
     }
@@ -71,13 +80,10 @@ export function App() {
     setStatus(STATUS.IDLE);
     setSearchValue('');
     setImages([]);
+    setIsLastPage(false);
   };
 
   // Methods for components render
-  const isLastPage = () => {
-    return images.length < photoFinder.perPage;
-  };
-
   const defineMainContent = () => {
     switch (status) {
       case STATUS.IDLE:
@@ -92,7 +98,7 @@ export function App() {
         return (
           <>
             <ImageGallery images={images} onCardClick={onGalleryCardClick} />
-            {!isLastPage() && (
+            {!isLastPage && (
               <Button
                 type="button"
                 className="btn"
