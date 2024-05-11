@@ -35,7 +35,6 @@ class SearchPhotoData {
         }
         throw Error;
       })
-      .then(data => data.hits)
       .catch(error => error);
   }
 }

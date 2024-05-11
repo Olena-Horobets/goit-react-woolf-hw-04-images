@@ -43,22 +43,20 @@ export function App() {
 
       photoFinder
         .getFetchResponse(searchValue, page)
-        .then(response => {
+        .then(({ hits, totalHits }) => {
           try {
-            if (!response.length) {
+            if (!hits.length) {
+              resetSearchData();
               notify(`Sorry, we couldn't find anything for you`);
             }
             if (page === 1) {
-              setIsLastPage(false);
-              setImages(response);
+              setImages(hits);
             } else {
-              setImages(prev => [...prev, ...response]);
+              setImages(prev => [...prev, ...hits]);
             }
 
-            if (response.length < 12) {
-              setIsLastPage(true);
-            }
             setStatus(STATUS.RESOLVED);
+            setIsLastPage(Math.ceil(totalHits / 12) === page);
           } catch {
             throw Error;
           }
@@ -80,6 +78,7 @@ export function App() {
     setStatus(STATUS.IDLE);
     setSearchValue('');
     setImages([]);
+    setPage(1);
     setIsLastPage(false);
   };
 
@@ -103,9 +102,7 @@ export function App() {
                 type="button"
                 className="btn"
                 text="Load more"
-                onClick={() => {
-                  setPage(prev => prev + 1);
-                }}
+                onClick={() => setPage(prev => prev + 1)}
               />
             )}
           </>
@@ -120,9 +117,7 @@ export function App() {
   };
 
   // Methods for modal window
-  const onGalleryCardClick = ({ url, alt }) => {
-    toggleModal(url, alt);
-  };
+  const onGalleryCardClick = ({ url, alt }) => toggleModal(url, alt);
 
   const toggleModal = (imageUrl = '', alt = '') => {
     setModal(prev => ({ ...prev, isShown: !prev.isShown, imageUrl, alt }));
